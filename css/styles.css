@@ -1,86 +1,31 @@
-/* ===========================
-   Morocco Banner Accent
-   =========================== */
-   .morocco-banner {
-    height: 8px;
-    background: repeating-linear-gradient(
-      45deg,
-      var(--mor-red) 0 8px,
-      var(--mor-green) 0 16px
-    );
+/* === ZELLIGE BACKGROUND TEXTURE === */
+.zellige-bg {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background-color: var(--light-bg);
+    background-image:
+      radial-gradient(var(--mor-green) 1px, transparent 1px),
+      radial-gradient(var(--mor-green) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    z-index: -1;
   }
   
-  /* ===========================
-     Order Page Panel
-     =========================== */
-  .order-section {
-    max-width: 640px;
-    margin: 2rem auto;
-    padding: 1.5rem 2rem;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
+  /* === Order Page tweaks === */
+  .order-section { max-width: 600px; margin:2rem auto; padding:2rem; }
+  .order-logo { height: 50px; }      /* match home page logo size */
+  .order-section h2 { margin: .5rem 0 1rem; }
   
-  .order-header {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  .order-logo {
-    height: 80px;
-    margin-bottom: 0.5rem;
-  }
-  .order-intro {
-    color: #555;
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Tighter form spacing */
-  .order-section label {
+  /* Rush checkbox styling */
+  .rush-label {
     display: block;
+    margin-top: .5rem;
+    margin-bottom: 1rem;
     font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-  .order-section input,
-  .order-section select,
-  .order-section textarea {
-    width: 100%;
-    padding: 0.6rem;
-    border: 1px solid #bbb;
-    border-radius: 4px;
-    margin-top: 0.3rem;
-    margin-bottom: 1rem;
-    line-height: 1.4;
-  }
-  .order-section fieldset {
-    border: 1px solid #bbb;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-  .order-section legend {
-    font-weight: 600;
-    padding: 0 0.3rem;
   }
   
-  /* Headings in green rather than red */
-  .order-section h2 {
-    font-size: 1.6rem;
-    color: var(--mor-green);
-    margin-bottom: 0.75rem;
-  }
+  /* tighten up spacing */
+  label, fieldset { margin-bottom: .75rem; }
+  input, select, textarea { line-height:1.3; }
   
-  /* PayPal button container */
-  .paypal-button-container {
-    margin-top: 1.5rem;
-    text-align: center;
-  }
-  
-  /* ETA / Notice text */
-  .eta-notice {
-    font-size: 0.9rem;
-    color: #666;
-    margin-top: 1.5rem;
-    text-align: center;
-  }
+  /* PayPal button */
+  .paypal-button-container { margin-top: 1rem; text-align:center; }

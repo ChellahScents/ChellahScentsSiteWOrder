@@ -10,10 +10,10 @@
 </head>
 <body>
 
-  <!-- Morocco banner accent -->
-  <div class="morocco-banner"></div>
+  <!-- Morocco Zellige Texture -->
+  <div class="zellige-bg"></div>
 
-  <!-- NAVBAR (same as your other pages) -->
+  <!-- NAVBAR -->
   <header>
     <nav class="navbar">
       <a href="index.html" class="nav-logo">
@@ -35,26 +35,36 @@
   <main>
     <section class="order-section">
       <div class="order-header">
-        <img src="img/logo.png" alt="Chellah Scents Logo" class="order-logo">
+        <img src="img/logo.png" alt="Logo" class="order-logo">
         <h2>Order Transcription · Translation · Subtitling</h2>
         <p class="order-intro">
-          Fill in the details below, upload your files, and pay securely via PayPal.
+          Complete the form, upload your files, choose delivery speed, then pay securely.
         </p>
       </div>
 
       <form id="order-form" enctype="multipart/form-data">
-        <!-- Original Language -->
+
+        <!-- ORDER NUMBER (auto‐generated) -->
+        <input type="hidden" name="orderNumber" id="orderNumber" value="">
+
+        <!-- CUSTOMER EMAIL -->
+        <label>
+          Your Email (Deliver To)
+          <input type="email" name="customerEmail" required placeholder="you@example.com">
+        </label>
+
+        <!-- ORIGINAL LANGUAGE -->
         <label>
           Original Language
           <input list="allLangs" name="sourceLang" required>
           <datalist id="allLangs">
             <option value="English"><option value="French"><option value="Arabic">
             <option value="Spanish"><option value="Mandarin"><option value="Hindi">
-            <!-- …add more as needed… -->
+            <!-- …add more -->
           </datalist>
         </label>
 
-        <!-- Target Languages -->
+        <!-- TARGET LANGUAGES -->
         <label>
           Target Language(s)
           <select name="targetLangs" multiple size="3" required>
@@ -65,7 +75,7 @@
           <small>Ctrl/Cmd + click to select multiple</small>
         </label>
 
-        <!-- Service Selection -->
+        <!-- SERVICES -->
         <fieldset>
           <legend>Select Service(s)</legend>
           <label><input type="checkbox" name="service" value="translation"> Translation</label>
@@ -73,7 +83,7 @@
           <label><input type="checkbox" name="service" value="subtitling"> Subtitle (SRT)</label>
         </fieldset>
 
-        <!-- Dynamic Fields -->
+        <!-- DYNAMIC FIELDS -->
         <div id="translation-fields" class="hidden">
           <label>
             Approx. Word Count
@@ -87,39 +97,44 @@
           </label>
         </div>
 
-        <!-- File Upload -->
+        <!-- RUSH DELIVERY OPTION -->
+        <label class="rush-label">
+          <input type="checkbox" name="rush" value="true"> Delivery in under 12 hours (+25% surcharge)
+        </label>
+
+        <!-- FILE UPLOADS -->
         <label>
           Upload Your Files
-          <input type="file" name="attachments" multiple>
+          <input type="file" name="attachments" multiple required>
         </label>
 
-        <!-- Extra Notes -->
+        <!-- ADDITIONAL NOTES -->
         <label>
           Additional Instructions
-          <textarea name="notes" rows="4" placeholder="Any special requirements…"></textarea>
+          <textarea name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
         </label>
 
-        <!-- Live Price -->
+        <!-- LIVE PRICE DISPLAY -->
         <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
 
-        <!-- PayPal Hosted Button -->
+        <!-- PAYPAL HOSTED BUTTON (cards + PayPal) -->
         <div id="paypal-container-KAMZYXTN97LT8" class="paypal-button-container"></div>
       </form>
 
       <p class="eta-notice">
-        Typical turnaround: <strong>24–48 hours</strong>.  
-        For rush jobs or questions, email 
-        <a href="mailto:mbounejmate@gmail.com">mbounejmate@gmail.com</a>.
+        Standard: 24–48 hours.  
+        Rush: under 12 hours (+25%).  
+        Questions? Email <a href="mailto:contact@chellah-scents.com">contact@chellah-scents.com</a>
       </p>
     </section>
   </main>
 
-  <!-- FOOTER (same as your other pages) -->
+  <!-- FOOTER -->
   <footer>
     <p>© 2024 Chellah Scents · Rooted Past, Soaring Future</p>
   </footer>
 
-  <!-- PayPal Hosted Buttons SDK -->
+  <!-- PAYPAL SDK & HOSTED BUTTON -->
   <script 
     src="https://www.paypal.com/sdk/js?
       client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8
