@@ -10,34 +10,62 @@
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- Morocco banner accent -->
+  <div class="morocco-banner"></div>
 
+  <!-- NAVBAR (same as your other pages) -->
+  <header>
+    <nav class="navbar">
+      <a href="index.html" class="nav-logo">
+        <img src="img/logo.png" alt="Chellah Scents">
+      </a>
+      <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+      <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="consulting.html">Consulting</a></li>
+        <li><a href="printing.html">3D Printing</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="order.html" class="active">Order</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- MAIN ORDER SECTION -->
   <main>
     <section class="order-section">
-      <h2>Order Transcription · Translation · Subtitling</h2>
+      <div class="order-header">
+        <img src="img/logo.png" alt="Chellah Scents Logo" class="order-logo">
+        <h2>Order Transcription · Translation · Subtitling</h2>
+        <p class="order-intro">
+          Fill in the details below, upload your files, and pay securely via PayPal.
+        </p>
+      </div>
 
       <form id="order-form" enctype="multipart/form-data">
-        <!-- languages -->
+        <!-- Original Language -->
         <label>
-          Original Language:
+          Original Language
           <input list="allLangs" name="sourceLang" required>
           <datalist id="allLangs">
-            <!-- abbreviated for brevity, fill with all world languages -->
             <option value="English"><option value="French"><option value="Arabic">
             <option value="Spanish"><option value="Mandarin"><option value="Hindi">
-            <!-- … -->
+            <!-- …add more as needed… -->
           </datalist>
         </label>
 
+        <!-- Target Languages -->
         <label>
-          Target Language(s):<br>
-          <select name="targetLangs" multiple size="4" required>
-            <option>English</option><option>French</option><option>Arabic</option>
+          Target Language(s)
+          <select name="targetLangs" multiple size="3" required>
+            <option>English</option>
+            <option>French</option>
+            <option>Arabic</option>
           </select>
-          <small>Ctrl/Cmd + click to select more</small>
+          <small>Ctrl/Cmd + click to select multiple</small>
         </label>
 
-        <!-- services -->
+        <!-- Service Selection -->
         <fieldset>
           <legend>Select Service(s)</legend>
           <label><input type="checkbox" name="service" value="translation"> Translation</label>
@@ -45,74 +73,64 @@
           <label><input type="checkbox" name="service" value="subtitling"> Subtitle (SRT)</label>
         </fieldset>
 
-        <!-- dynamic fields -->
+        <!-- Dynamic Fields -->
         <div id="translation-fields" class="hidden">
-          <label>Word Count (approx.):<br>
+          <label>
+            Approx. Word Count
             <input type="number" name="wordCount" min="0" value="0">
           </label>
         </div>
         <div id="audio-fields" class="hidden">
-          <label>Audio/Video Length (minutes):<br>
+          <label>
+            Audio/Video Length (minutes)
             <input type="number" name="lengthMin" min="0" value="0">
           </label>
         </div>
 
-        <!-- file upload -->
-        <label>Upload your files:<br>
+        <!-- File Upload -->
+        <label>
+          Upload Your Files
           <input type="file" name="attachments" multiple>
         </label>
 
-        <!-- additional notes -->
-        <label>Additional Instructions:<br>
-          <textarea name="notes" rows="4"></textarea>
+        <!-- Extra Notes -->
+        <label>
+          Additional Instructions
+          <textarea name="notes" rows="4" placeholder="Any special requirements…"></textarea>
         </label>
 
-        <!-- price display -->
+        <!-- Live Price -->
         <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
 
-        <!-- PayPal Smart Buttons (accept cards + PayPal) -->
-        <div id="paypal-button-container"></div>
+        <!-- PayPal Hosted Button -->
+        <div id="paypal-container-KAMZYXTN97LT8" class="paypal-button-container"></div>
       </form>
 
       <p class="eta-notice">
-        Once you click Pay, our usual turnaround is <strong>24–48 hours</strong>. Rush jobs? Email <a href="mailto:mbounejmate@gmail.com">mbounejmate@gmail.com</a>.
+        Typical turnaround: <strong>24–48 hours</strong>.  
+        For rush jobs or questions, email 
+        <a href="mailto:mbounejmate@gmail.com">mbounejmate@gmail.com</a>.
       </p>
     </section>
   </main>
 
-  <!-- FOOTER -->
+  <!-- FOOTER (same as your other pages) -->
+  <footer>
+    <p>© 2024 Chellah Scents · Rooted Past, Soaring Future</p>
+  </footer>
 
-  <!-- PayPal SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
-  <script>
-    // Render PayPal Buttons when order.js sets up amount
-    paypal.Buttons({
-      style: { color:'gold', shape:'pill', label:'pay' },
-      onInit: function(data, actions) {
-        // disable until we calculate
-        actions.disable();
-        window.addEventListener('orderChanged', () => {
-          const total = window.CHELLAH_TOTAL || 0;
-          if (total > 0) actions.enable();
-        });
-      },
-      createOrder: function(data, actions) {
-        const total = window.CHELLAH_TOTAL.toFixed(2);
-        return actions.order.create({
-          purchase_units: [{
-            description: 'Chellah Scents Services',
-            amount: { value: total }
-          }]
-        });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(details => {
-          // here you could send details to your server or call Formspree
-          alert('Thank you, '+ details.payer.name.given_name +'! Order placed.');
-        });
-      }
-    }).render('#paypal-button-container');
+  <!-- PayPal Hosted Buttons SDK -->
+  <script 
+    src="https://www.paypal.com/sdk/js?
+      client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8
+      &components=hosted-buttons
+      &disable-funding=venmo
+      &currency=USD">
   </script>
-
+  <script>
+    paypal.HostedButtons({
+      hostedButtonId: "KAMZYXTN97LT8"
+    }).render("#paypal-container-KAMZYXTN97LT8");
+  </script>
 </body>
 </html>
