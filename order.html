@@ -4,20 +4,24 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Order Services • Chellah Scents</title>
+
+  <!-- Site‐wide CSS -->
   <link rel="stylesheet" href="css/styles.css"/>
+
+  <!-- Mobile nav toggle + order logic -->
   <script src="js/main.js" defer></script>
   <script src="js/order.js" defer></script>
 </head>
 <body>
 
-  <!-- Morocco Zellige Texture -->
+  <!-- Zellige‐style background -->
   <div class="zellige-bg"></div>
 
   <!-- NAVBAR -->
   <header>
     <nav class="navbar">
       <a href="index.html" class="nav-logo">
-        <img src="img/logo.png" alt="Chellah Scents">
+        <img src="img/logo.png" alt="Chellah Scents Logo">
       </a>
       <button class="nav-toggle" aria-label="Toggle menu">☰</button>
       <ul class="nav-menu">
@@ -35,36 +39,38 @@
   <main>
     <section class="order-section">
       <div class="order-header">
-        <img src="img/logo.png" alt="Logo" class="order-logo">
         <h2>Order Transcription · Translation · Subtitling</h2>
         <p class="order-intro">
-          Complete the form, upload your files, choose delivery speed, then pay securely.
+          Complete the form below, upload your files, choose your delivery speed, then pay securely.
         </p>
       </div>
 
       <form id="order-form" enctype="multipart/form-data">
-
-        <!-- ORDER NUMBER (auto‐generated) -->
+        <!-- Auto‐generated order number -->
         <input type="hidden" name="orderNumber" id="orderNumber" value="">
 
-        <!-- CUSTOMER EMAIL -->
+        <!-- Customer delivery email -->
         <label>
           Your Email (Deliver To)
           <input type="email" name="customerEmail" required placeholder="you@example.com">
         </label>
 
-        <!-- ORIGINAL LANGUAGE -->
+        <!-- Original language -->
         <label>
           Original Language
           <input list="allLangs" name="sourceLang" required>
           <datalist id="allLangs">
-            <option value="English"><option value="French"><option value="Arabic">
-            <option value="Spanish"><option value="Mandarin"><option value="Hindi">
-            <!-- …add more -->
+            <option value="English">
+            <option value="French">
+            <option value="Arabic">
+            <option value="Spanish">
+            <option value="Mandarin">
+            <option value="Hindi">
+            <!-- …add more languages… -->
           </datalist>
         </label>
 
-        <!-- TARGET LANGUAGES -->
+        <!-- Target languages -->
         <label>
           Target Language(s)
           <select name="targetLangs" multiple size="3" required>
@@ -75,7 +81,7 @@
           <small>Ctrl/Cmd + click to select multiple</small>
         </label>
 
-        <!-- SERVICES -->
+        <!-- Services -->
         <fieldset>
           <legend>Select Service(s)</legend>
           <label><input type="checkbox" name="service" value="translation"> Translation</label>
@@ -83,7 +89,7 @@
           <label><input type="checkbox" name="service" value="subtitling"> Subtitle (SRT)</label>
         </fieldset>
 
-        <!-- DYNAMIC FIELDS -->
+        <!-- Dynamic fields -->
         <div id="translation-fields" class="hidden">
           <label>
             Approx. Word Count
@@ -97,34 +103,43 @@
           </label>
         </div>
 
-        <!-- RUSH DELIVERY OPTION -->
+        <!-- Rush delivery -->
         <label class="rush-label">
-          <input type="checkbox" name="rush" value="true"> Delivery in under 12 hours (+25% surcharge)
+          <input type="checkbox" name="rush" value="true">
+          Delivery in under 12 hours (+25% surcharge)
         </label>
 
-        <!-- FILE UPLOADS -->
+        <!-- File upload -->
         <label>
           Upload Your Files
           <input type="file" name="attachments" multiple required>
         </label>
 
-        <!-- ADDITIONAL NOTES -->
+        <!-- Additional notes -->
         <label>
           Additional Instructions
-          <textarea name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
+          <textarea name="notes" rows="3" placeholder="Any special requests?"></textarea>
         </label>
 
-        <!-- LIVE PRICE DISPLAY -->
+        <!-- Live price -->
         <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
 
-        <!-- PAYPAL HOSTED BUTTON (cards + PayPal) -->
-        <div id="paypal-container-KAMZYXTN97LT8" class="paypal-button-container"></div>
+        <!-- Submit to Netlify Function -->
+        <button type="submit" class="btn submit-btn">
+          Submit Order & Upload Files
+        </button>
+
+        <!-- PayPal Hosted Button -->
+        <div id="paypal-container-KAMZYXTN97LT8"
+             class="paypal-button-container">
+        </div>
       </form>
 
       <p class="eta-notice">
-        Standard: 24–48 hours.  
-        Rush: under 12 hours (+25%).  
-        Questions? Email <a href="mailto:contact@chellah-scents.com">contact@chellah-scents.com</a>
+        Standard turnaround: 24–48 hours.<br>
+        Rush turnaround: under 12 hours (+25%).<br>
+        Questions? Email <a href="mailto:contact@chellah-scents.com">
+        contact@chellah-scents.com</a>.
       </p>
     </section>
   </main>
@@ -134,13 +149,13 @@
     <p>© 2024 Chellah Scents · Rooted Past, Soaring Future</p>
   </footer>
 
-  <!-- PAYPAL SDK & HOSTED BUTTON -->
+  <!-- PayPal Hosted Buttons SDK -->
   <script 
     src="https://www.paypal.com/sdk/js?
-      client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8
-      &components=hosted-buttons
-      &disable-funding=venmo
-      &currency=USD">
+      client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&
+      components=hosted-buttons&
+      disable-funding=venmo&
+      currency=USD">
   </script>
   <script>
     paypal.HostedButtons({
