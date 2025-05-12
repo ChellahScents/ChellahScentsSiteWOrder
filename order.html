@@ -46,16 +46,13 @@
       </div>
 
       <form id="order-form" enctype="multipart/form-data">
-        <!-- Auto‐generated order number -->
         <input type="hidden" name="orderNumber" id="orderNumber" value="">
 
-        <!-- Customer delivery email -->
         <label>
           Your Email (Deliver To)
           <input type="email" name="customerEmail" required placeholder="you@example.com">
         </label>
 
-        <!-- Original language -->
         <label>
           Original Language
           <input list="allLangs" name="sourceLang" required>
@@ -66,11 +63,9 @@
             <option value="Spanish">
             <option value="Mandarin">
             <option value="Hindi">
-            <!-- …add more languages… -->
           </datalist>
         </label>
 
-        <!-- Target languages -->
         <label>
           Target Language(s)
           <select name="targetLangs" multiple size="3" required>
@@ -81,7 +76,6 @@
           <small>Ctrl/Cmd + click to select multiple</small>
         </label>
 
-        <!-- Services -->
         <fieldset>
           <legend>Select Service(s)</legend>
           <label><input type="checkbox" name="service" value="translation"> Translation</label>
@@ -89,7 +83,6 @@
           <label><input type="checkbox" name="service" value="subtitling"> Subtitle (SRT)</label>
         </fieldset>
 
-        <!-- Dynamic fields -->
         <div id="translation-fields" class="hidden">
           <label>
             Approx. Word Count
@@ -103,64 +96,58 @@
           </label>
         </div>
 
-        <!-- Rush delivery -->
         <label class="rush-label">
           <input type="checkbox" name="rush" value="true">
           Delivery in under 12 hours (+25% surcharge)
         </label>
 
-        <!-- File upload -->
         <label>
           Upload Your Files
-          <input type="file" name="attachments" multiple required>
+          <input type="file" name="attachments" id="fileInput" multiple required>
         </label>
+        <button type="button" class="upload-btn" id="uploadButton">Upload Files</button>
 
-        <!-- Additional notes -->
         <label>
           Additional Instructions
           <textarea name="notes" rows="3" placeholder="Any special requests?"></textarea>
         </label>
 
-        <!-- Live price -->
         <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
 
-        <!-- Submit to Netlify Function -->
-        <button type="submit" class="btn submit-btn">
-          Submit Order & Upload Files
-        </button>
+        <button type="submit" class="btn submit-btn">Submit Order & Upload Files</button>
 
-        <!-- PayPal Hosted Button -->
-        <div id="paypal-container-KAMZYXTN97LT8"
-             class="paypal-button-container">
-        </div>
+        <div id="paypal-container-KAMZYXTN97LT8" class="paypal-button-container"></div>
       </form>
 
       <p class="eta-notice">
         Standard turnaround: 24–48 hours.<br>
         Rush turnaround: under 12 hours (+25%).<br>
-        Questions? Email <a href="mailto:contact@chellah-scents.com">
-        contact@chellah-scents.com</a>.
+        Questions? Email <a href="mailto:contact@chellah-scents.com">contact@chellah-scents.com</a>.
       </p>
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer>
     <p>© 2024 Chellah Scents · Rooted Past, Soaring Future</p>
   </footer>
 
   <!-- PayPal Hosted Buttons SDK -->
   <script 
-    src="https://www.paypal.com/sdk/js?
-      client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&
-      components=hosted-buttons&
-      disable-funding=venmo&
-      currency=USD">
+    src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=hosted-buttons&disable-funding=venmo&currency=USD">
   </script>
   <script>
     paypal.HostedButtons({
       hostedButtonId: "KAMZYXTN97LT8"
     }).render("#paypal-container-KAMZYXTN97LT8");
+
+    document.getElementById('uploadButton').addEventListener('click', function() {
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput.files.length > 0) {
+        alert(`${fileInput.files.length} file(s) ready for upload.`);
+      } else {
+        alert('Please select at least one file to upload.');
+      }
+    });
   </script>
 </body>
 </html>
