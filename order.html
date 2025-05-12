@@ -5,24 +5,24 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Order Services • Chellah Scents</title>
 
-  <!-- Site‐wide CSS -->
   <link rel="stylesheet" href="css/styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Mobile nav toggle + order logic -->
-  <script src="js/main.js" defer></script>
-  <script src="js/order.js" defer></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- PayPal Smart Buttons -->
+  <script src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&currency=USD"></script>
 </head>
 <body>
 
-  <!-- Zellige‐style background -->
   <div class="zellige-bg"></div>
 
-  <!-- NAVBAR -->
   <header>
     <nav class="navbar">
-      <a href="index.html" class="nav-logo">
-        <img src="img/logo.png" alt="Chellah Scents Logo">
-      </a>
+      <a href="index.html" class="nav-logo"><img src="img/logo.png" alt="Chellah Scents Logo"></a>
       <button class="nav-toggle" aria-label="Toggle menu">☰</button>
       <ul class="nav-menu">
         <li><a href="index.html">Home</a></li>
@@ -35,39 +35,29 @@
     </nav>
   </header>
 
-  <!-- MAIN ORDER SECTION -->
   <main>
     <section class="order-section">
       <div class="order-header">
         <h2>Order Transcription · Translation · Subtitling</h2>
-        <p class="order-intro">
-          Complete the form below, upload your files, choose your delivery speed, then pay securely.
-        </p>
+        <p class="order-intro">Complete the form below, upload your files, choose your delivery speed, then pay securely.</p>
       </div>
 
-      <form id="order-form" enctype="multipart/form-data">
+      <form id="order-form">
         <input type="hidden" name="orderNumber" id="orderNumber" value="">
 
-        <label>
-          Your Email (Deliver To)
+        <label>Your Email (Deliver To)
           <input type="email" name="customerEmail" required placeholder="you@example.com">
         </label>
 
-        <label>
-          Original Language
+        <label>Original Language
           <input list="allLangs" name="sourceLang" required>
           <datalist id="allLangs">
-            <option value="English">
-            <option value="French">
-            <option value="Arabic">
-            <option value="Spanish">
-            <option value="Mandarin">
-            <option value="Hindi">
+            <option value="English"><option value="French"><option value="Arabic">
+            <option value="Spanish"><option value="Mandarin"><option value="Hindi">
           </datalist>
         </label>
 
-        <label>
-          Target Language(s)
+        <label>Target Language(s)
           <select name="targetLangs" multiple size="3" required>
             <option>English</option>
             <option>French</option>
@@ -84,14 +74,13 @@
         </fieldset>
 
         <div id="translation-fields" class="hidden">
-          <label>
-            Approx. Word Count
+          <label>Approx. Word Count
             <input type="number" name="wordCount" min="0" value="0">
           </label>
         </div>
+
         <div id="audio-fields" class="hidden">
-          <label>
-            Audio/Video Length (minutes)
+          <label>Audio/Video Length (minutes)
             <input type="number" name="lengthMin" min="0" value="0">
           </label>
         </div>
@@ -101,22 +90,17 @@
           Delivery in under 12 hours (+25% surcharge)
         </label>
 
-        <label>
-          Upload Your Files
+        <label>Upload Your Files
           <input type="file" name="attachments" id="fileInput" multiple required>
         </label>
-        <button type="button" class="upload-btn" id="uploadButton">Upload Files</button>
 
-        <label>
-          Additional Instructions
+        <label>Additional Instructions
           <textarea name="notes" rows="3" placeholder="Any special requests?"></textarea>
         </label>
 
-        <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
+        <p><strong>Total: $<span id="total-price">50.00</span></strong></p>
 
-        <button type="submit" class="btn submit-btn">Submit Order & Upload Files</button>
-
-        <div id="paypal-container-KAMZYXTN97LT8" class="paypal-button-container"></div>
+        <div id="paypal-button-container" class="paypal-button-container"></div>
       </form>
 
       <p class="eta-notice">
@@ -131,23 +115,57 @@
     <p>© 2024 Chellah Scents · Rooted Past, Soaring Future</p>
   </footer>
 
-  <!-- PayPal Hosted Buttons SDK -->
-  <script 
-    src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=hosted-buttons&disable-funding=venmo&currency=USD">
-  </script>
   <script>
-    paypal.HostedButtons({
-      hostedButtonId: "KAMZYXTN97LT8"
-    }).render("#paypal-container-KAMZYXTN97LT8");
+    const firebaseConfig = {
+      apiKey: "AIzaSyBIIyuFigBoRR7Ev9wULduht3nx5kxp6i4",
+      authDomain: "chellah-orders.firebaseapp.com",
+      projectId: "chellah-orders",
+      storageBucket: "chellah-orders.appspot.com",
+      messagingSenderId: "577794209323",
+      appId: "1:577794209323:web:6da2e20a2ddc1718945c6e",
+      measurementId: "G-Q624T3QYFW"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
 
-    document.getElementById('uploadButton').addEventListener('click', function() {
-      const fileInput = document.getElementById('fileInput');
-      if (fileInput.files.length > 0) {
-        alert(`${fileInput.files.length} file(s) ready for upload.`);
-      } else {
-        alert('Please select at least one file to upload.');
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{ amount: { value: '50.00' } }]
+        });
+      },
+      onApprove: async function(data, actions) {
+        const details = await actions.order.capture();
+        const form = document.getElementById('order-form');
+        const formData = new FormData(form);
+        const orderID = `ORD-${Date.now()}`;
+        const order = {
+          orderID,
+          customerEmail: formData.get("customerEmail"),
+          sourceLang: formData.get("sourceLang"),
+          targetLangs: formData.getAll("targetLangs"),
+          services: formData.getAll("service"),
+          wordCount: formData.get("wordCount"),
+          lengthMin: formData.get("lengthMin"),
+          rush: formData.get("rush") === "true",
+          notes: formData.get("notes"),
+          paid: true,
+          timestamp: new Date().toISOString()
+        };
+
+        await db.collection("orders").doc(orderID).set(order);
+
+        const files = document.getElementById("fileInput").files;
+        for (const file of files) {
+          const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
+          await fileRef.put(file);
+        }
+
+        alert("Payment and order submitted successfully!");
+        form.reset();
       }
-    });
+    }).render('#paypal-button-container');
   </script>
 </body>
 </html>
