@@ -14,7 +14,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
   <!-- PayPal Smart Buttons SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&currency=USD"></script>
+  <script 
+  src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=hosted-buttons&disable-funding=venmo&currency=USD">
+</script>
 </head>
 <body>
 
@@ -100,7 +102,12 @@
 
         <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
 
-        <div id="paypal-button-container" class="paypal-button-container"></div>
+        <div id="paypal-container-KAMZYXTN97LT8"></div>
+        <script>
+            paypal.HostedButtons({
+                 hostedButtonId: "KAMZYXTN97LT8",
+             }).render("#paypal-container-KAMZYXTN97LT8");
+        </script>
       </form>
 
       <p class="eta-notice">
