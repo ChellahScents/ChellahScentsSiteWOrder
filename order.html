@@ -15,8 +15,8 @@
 
   <!-- PayPal Smart Buttons SDK -->
   <script 
-  src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=hosted-buttons&disable-funding=venmo&currency=USD">
-</script>
+  src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=buttons&disable-funding=venmo&currency=USD">
+  </script>
 </head>
 <body>
 
@@ -54,8 +54,12 @@
         <label>Original Language
           <input list="allLangs" name="sourceLang" required>
           <datalist id="allLangs">
-            <option value="English"><option value="French"><option value="Arabic">
-            <option value="Spanish"><option value="Mandarin"><option value="Hindi">
+            <option value="English">
+            <option value="French">
+            <option value="Arabic">
+            <option value="Spanish">
+            <option value="Mandarin">
+            <option value="Hindi">
           </datalist>
         </label>
 
@@ -102,12 +106,7 @@
 
         <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
 
-        <div id="paypal-container-KAMZYXTN97LT8"></div>
-        <script>
-            paypal.HostedButtons({
-                 hostedButtonId: "KAMZYXTN97LT8",
-             }).render("#paypal-container-KAMZYXTN97LT8");
-        </script>
+        <div id="paypal-button-container"></div>
       </form>
 
       <p class="eta-notice">
@@ -133,10 +132,12 @@
       measurementId: "G-Q624T3QYFW"
     };
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
 
+    // Calculate total price for services
     function calculateTotal() {
       const form = document.getElementById('order-form');
       const services = [...form.querySelectorAll('input[name="service"]:checked')].map(el => el.value);
@@ -155,6 +156,7 @@
       return total;
     }
 
+    // Update display of total price
     function updateTotalDisplay() {
       const total = calculateTotal();
       document.getElementById("total-price").textContent = total.toFixed(2);
@@ -163,6 +165,7 @@
     document.getElementById("order-form").addEventListener("change", updateTotalDisplay);
     document.getElementById("order-form").addEventListener("input", updateTotalDisplay);
 
+    // Initialize PayPal buttons after DOM loads
     document.addEventListener("DOMContentLoaded", () => {
       paypal.Buttons({
         style: {
@@ -173,6 +176,7 @@
         },
         createOrder: function(data, actions) {
           const price = calculateTotal().toFixed(2);
+          console.log("Creating order with total price:", price); // Log for debugging
           return actions.order.create({
             purchase_units: [{
               amount: { value: price }
@@ -180,9 +184,12 @@
           });
         },
         onApprove: async function(data, actions) {
+          console.log("Approving order..."); // Log for debugging
           try {
-            await actions.order.capture();
+            const captureResult = await actions.order.capture();
+            console.log("Order captured:", captureResult); // Log for debugging
 
+            // Process form data
             const form = document.getElementById('order-form');
             const formData = new FormData(form);
             const orderID = `ORD-${Date.now()}`;
@@ -214,6 +221,7 @@
               fileLinks.push(url);
             }
 
+            // Email notification (using Firebase functions)
             await db.collection("mail").add({
               to: ["mbounejmate@gmail.com"],
               message: {
