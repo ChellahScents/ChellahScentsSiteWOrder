@@ -13,7 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-  <!-- PayPal Smart Buttons -->
+  <!-- PayPal Smart Buttons SDK -->
   <script src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&currency=USD"></script>
 </head>
 <body>
@@ -139,15 +139,9 @@
 
       let total = 0;
 
-      if (services.includes("translation")) {
-        total += wordCount * 0.10;
-      }
-      if (services.includes("transcription")) {
-        total += lengthMin * 1.00;
-      }
-      if (services.includes("subtitling")) {
-        total += lengthMin * 1.25;
-      }
+      if (services.includes("translation")) total += wordCount * 0.10;
+      if (services.includes("transcription")) total += lengthMin * 1.00;
+      if (services.includes("subtitling")) total += lengthMin * 1.25;
 
       if (isRush) total *= 1.25;
 
@@ -162,88 +156,90 @@
     document.getElementById("order-form").addEventListener("change", updateTotalDisplay);
     document.getElementById("order-form").addEventListener("input", updateTotalDisplay);
 
-    paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        color: 'gold',
-        shape: 'rect',
-        label: 'paypal'
-      },
-      createOrder: function(data, actions) {
-        const price = calculateTotal().toFixed(2);
-        return actions.order.create({
-          purchase_units: [{
-            amount: { value: price }
-          }]
-        });
-      },
-      onApprove: async function(data, actions) {
-        try {
-          await actions.order.capture();
-
-          const form = document.getElementById('order-form');
-          const formData = new FormData(form);
-          const orderID = `ORD-${Date.now()}`;
-
-          const order = {
-            orderID,
-            customerEmail: formData.get("customerEmail"),
-            sourceLang: formData.get("sourceLang"),
-            targetLangs: formData.getAll("targetLangs"),
-            services: formData.getAll("service"),
-            wordCount: formData.get("wordCount"),
-            lengthMin: formData.get("lengthMin"),
-            rush: formData.get("rush") === "true",
-            notes: formData.get("notes"),
-            paid: true,
-            totalPaid: calculateTotal().toFixed(2),
-            timestamp: new Date().toISOString()
-          };
-
-          await db.collection("orders").doc(orderID).set(order);
-
-          const files = document.getElementById("fileInput").files;
-          const fileLinks = [];
-
-          for (const file of files) {
-            const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
-            await fileRef.put(file);
-            const url = await fileRef.getDownloadURL();
-            fileLinks.push(url);
-          }
-
-          await db.collection("mail").add({
-            to: ["mbounejmate@gmail.com"],
-            message: {
-              subject: `New Order Received: ${orderID}`,
-              html: `
-                <p><strong>Order ID:</strong> ${orderID}</p>
-                <p><strong>Email:</strong> ${order.customerEmail}</p>
-                <p><strong>Services:</strong> ${order.services.join(", ")}</p>
-                <p><strong>Languages:</strong> ${order.sourceLang} → ${order.targetLangs.join(", ")}</p>
-                <p><strong>Word Count:</strong> ${order.wordCount}</p>
-                <p><strong>Length (min):</strong> ${order.lengthMin}</p>
-                <p><strong>Rush:</strong> ${order.rush ? "Yes" : "No"}</p>
-                <p><strong>Notes:</strong> ${order.notes}</p>
-                <p><strong>Files:</strong></p>
-                <ul>${fileLinks.map(link => `<li><a href="${link}">${link}</a></li>`).join("")}</ul>
-              `
-            }
+    document.addEventListener("DOMContentLoaded", () => {
+      paypal.Buttons({
+        style: {
+          layout: 'vertical',
+          color: 'gold',
+          shape: 'rect',
+          label: 'paypal'
+        },
+        createOrder: function(data, actions) {
+          const price = calculateTotal().toFixed(2);
+          return actions.order.create({
+            purchase_units: [{
+              amount: { value: price }
+            }]
           });
+        },
+        onApprove: async function(data, actions) {
+          try {
+            await actions.order.capture();
 
-          alert("Order placed and payment received!");
-          form.reset();
-          updateTotalDisplay();
-        } catch (err) {
-          console.error("Order submission error:", err);
-          alert("Something went wrong. Please try again.");
+            const form = document.getElementById('order-form');
+            const formData = new FormData(form);
+            const orderID = `ORD-${Date.now()}`;
+
+            const order = {
+              orderID,
+              customerEmail: formData.get("customerEmail"),
+              sourceLang: formData.get("sourceLang"),
+              targetLangs: formData.getAll("targetLangs"),
+              services: formData.getAll("service"),
+              wordCount: formData.get("wordCount"),
+              lengthMin: formData.get("lengthMin"),
+              rush: formData.get("rush") === "true",
+              notes: formData.get("notes"),
+              paid: true,
+              totalPaid: calculateTotal().toFixed(2),
+              timestamp: new Date().toISOString()
+            };
+
+            await db.collection("orders").doc(orderID).set(order);
+
+            const files = document.getElementById("fileInput").files;
+            const fileLinks = [];
+
+            for (const file of files) {
+              const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
+              await fileRef.put(file);
+              const url = await fileRef.getDownloadURL();
+              fileLinks.push(url);
+            }
+
+            await db.collection("mail").add({
+              to: ["mbounejmate@gmail.com"],
+              message: {
+                subject: `New Order Received: ${orderID}`,
+                html: `
+                  <p><strong>Order ID:</strong> ${orderID}</p>
+                  <p><strong>Email:</strong> ${order.customerEmail}</p>
+                  <p><strong>Services:</strong> ${order.services.join(", ")}</p>
+                  <p><strong>Languages:</strong> ${order.sourceLang} → ${order.targetLangs.join(", ")}</p>
+                  <p><strong>Word Count:</strong> ${order.wordCount}</p>
+                  <p><strong>Length (min):</strong> ${order.lengthMin}</p>
+                  <p><strong>Rush:</strong> ${order.rush ? "Yes" : "No"}</p>
+                  <p><strong>Notes:</strong> ${order.notes}</p>
+                  <p><strong>Files:</strong></p>
+                  <ul>${fileLinks.map(link => `<li><a href="${link}">${link}</a></li>`).join("")}</ul>
+                `
+              }
+            });
+
+            alert("Order placed and payment received!");
+            form.reset();
+            updateTotalDisplay();
+          } catch (err) {
+            console.error("Order submission error:", err);
+            alert("Something went wrong. Please try again.");
+          }
+        },
+        onError: function(err) {
+          console.error("PayPal error:", err);
+          alert("Payment could not be completed. Please try again.");
         }
-      },
-      onError: function(err) {
-        console.error("PayPal error:", err);
-        alert("Payment could not be completed. Please try again.");
-      }
-    }).render('#paypal-button-container');
+      }).render('#paypal-button-container');
+    });
   </script>
 </body>
 </html>
