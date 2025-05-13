@@ -185,70 +185,74 @@
         },
         onApprove: async function(data, actions) {
           console.log("Approving order..."); // Log for debugging
-          try {
-            const captureResult = await actions.order.capture();
-            console.log("Order captured:", captureResult); // Log for debugging
+          // Inside the onApprove function:
+try {
+    console.log("Order approved. Capturing payment...");
+    const captureResult = await actions.order.capture();
+    console.log("Payment captured successfully:", captureResult);
 
-            // Process form data
-            const form = document.getElementById('order-form');
-            const formData = new FormData(form);
-            const orderID = `ORD-${Date.now()}`;
+    // Create the order details for Firebase
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    const orderID = `ORD-${Date.now()}`;
 
-            const order = {
-              orderID,
-              customerEmail: formData.get("customerEmail"),
-              sourceLang: formData.get("sourceLang"),
-              targetLangs: formData.getAll("targetLangs"),
-              services: formData.getAll("service"),
-              wordCount: formData.get("wordCount"),
-              lengthMin: formData.get("lengthMin"),
-              rush: formData.get("rush") === "true",
-              notes: formData.get("notes"),
-              paid: true,
-              totalPaid: calculateTotal().toFixed(2),
-              timestamp: new Date().toISOString()
-            };
+    const order = {
+        orderID,
+        customerEmail: formData.get("customerEmail"),
+        sourceLang: formData.get("sourceLang"),
+        targetLangs: formData.getAll("targetLangs"),
+        services: formData.getAll("service"),
+        wordCount: formData.get("wordCount") || 0,
+        lengthMin: formData.get("lengthMin") || 0,
+        rush: formData.get("rush") === "true",
+        notes: formData.get("notes"),
+        paid: true,
+        totalPaid: calculateTotal().toFixed(2),
+        timestamp: new Date().toISOString()
+    };
 
-            await db.collection("orders").doc(orderID).set(order);
+    console.log("Saving order to Firebase:", order);
 
-            const files = document.getElementById("fileInput").files;
-            const fileLinks = [];
+    await db.collection("orders").doc(orderID).set(order);
+    console.log("Order saved successfully to Firebase.");
 
-            for (const file of files) {
-              const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
-              await fileRef.put(file);
-              const url = await fileRef.getDownloadURL();
-              fileLinks.push(url);
-            }
+    const files = document.getElementById("fileInput").files;
+    const fileLinks = [];
+    
+    for (const file of files) {
+        const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
+        const snapshot = await fileRef.put(file);
+        const url = await fileRef.getDownloadURL();
+        console.log(`Uploaded file: ${file.name} URL: ${url}`);
+        fileLinks.push(url);
+    }
 
-            // Email notification (using Firebase functions)
-            await db.collection("mail").add({
-              to: ["mbounejmate@gmail.com"],
-              message: {
-                subject: `New Order Received: ${orderID}`,
-                html: `
-                  <p><strong>Order ID:</strong> ${orderID}</p>
-                  <p><strong>Email:</strong> ${order.customerEmail}</p>
-                  <p><strong>Services:</strong> ${order.services.join(", ")}</p>
-                  <p><strong>Languages:</strong> ${order.sourceLang} → ${order.targetLangs.join(", ")}</p>
-                  <p><strong>Word Count:</strong> ${order.wordCount}</p>
-                  <p><strong>Length (min):</strong> ${order.lengthMin}</p>
-                  <p><strong>Rush:</strong> ${order.rush ? "Yes" : "No"}</p>
-                  <p><strong>Notes:</strong> ${order.notes}</p>
-                  <p><strong>Files:</strong></p>
-                  <ul>${fileLinks.map(link => `<li><a href="${link}">${link}</a></li>`).join("")}</ul>
-                `
-              }
-            });
+    await db.collection("mail").add({
+        to: ["mbounejmate@gmail.com"],
+        message: {
+            subject: `New Order Received: ${orderID}`,
+            html: `
+                <p><strong>Order ID:</strong> ${orderID}</p>
+                <p><strong>Email:</strong> ${order.customerEmail}</p>
+                <p><strong>Services:</strong> ${order.services.join(", ")}</p>
+                <p><strong>Languages:</strong> ${order.sourceLang} → ${order.targetLangs.join(", ")}</p>
+                <p><strong>Word Count:</strong> ${order.wordCount}</p>
+                <p><strong>Length (min):</strong> ${order.lengthMin}</p>
+                <p><strong>Rush:</strong> ${order.rush ? "Yes" : "No"}</p>
+                <p><strong>Notes:</strong> ${order.notes}</p>
+                <p><strong>Files:</strong></p>
+                <ul>${fileLinks.map(link => `<li><a href="${link}">${link}</a></li>`).join("")}</ul>
+            `
+        }
+    });
 
-            alert("Order placed and payment received!");
-            form.reset();
-            updateTotalDisplay();
-          } catch (err) {
-            console.error("Order submission error:", err);
-            alert("Something went wrong. Please try again.");
-          }
-        },
+    alert("Order placed and payment received!");
+    form.reset();
+    updateTotalDisplay();
+} catch (err) {
+    console.error("Error processing the order:", err);
+    alert("Something went wrong. Please try again later.");
+}
         onError: function(err) {
           console.error("PayPal error:", err);
           alert("Payment could not be completed. Please try again.");
