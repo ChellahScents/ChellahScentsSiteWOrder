@@ -104,12 +104,15 @@ const firebaseConfig = {
           console.log("✅ Starting upload of", files.length, "files");
           const fileUploadPromises = Array.from(files).map(async (file) => {
             const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
-            const snapshot = await fileRef.put(file);
+            const metadata = {
+              contentType: file.type || 'application/octet-stream'
+            };
+            const snapshot = await fileRef.put(file, metadata);
             const url = await fileRef.getDownloadURL();
             console.log(`✅ Uploaded ${file.name}`);
             return url;
           });
-  
+          
           const fileLinks = await Promise.all(fileUploadPromises);
           console.log("✅ All files uploaded:", fileLinks);
   
