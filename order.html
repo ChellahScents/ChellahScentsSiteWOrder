@@ -13,13 +13,13 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+  <!-- EmailJS -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
   <!-- PayPal Smart Buttons SDK -->
-  <script 
-  src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=buttons&disable-funding=venmo&currency=USD">
-  </script>
+  <script src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=buttons&disable-funding=venmo&currency=USD"></script>
 </head>
 <body>
-
   <div class="zellige-bg"></div>
 
   <header>
@@ -121,144 +121,6 @@
     <p>© 2024 Chellah Scents · Rooted Past, Soaring Future</p>
   </footer>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBIIyuFigBoRR7Ev9wULduht3nx5kxp6i4",
-      authDomain: "chellah-orders.firebaseapp.com",
-      projectId: "chellah-orders",
-      storageBucket: "chellah-orders.appspot.com",
-      messagingSenderId: "577794209323",
-      appId: "1:577794209323:web:6da2e20a2ddc1718945c6e",
-      measurementId: "G-Q624T3QYFW"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-
-    // Calculate total price for services
-    function calculateTotal() {
-      const form = document.getElementById('order-form');
-      const services = [...form.querySelectorAll('input[name="service"]:checked')].map(el => el.value);
-      const wordCount = parseInt(form.wordCount?.value || "0");
-      const lengthMin = parseInt(form.lengthMin?.value || "0");
-      const isRush = form.rush?.checked;
-
-      let total = 0;
-
-      if (services.includes("translation")) total += wordCount * 0.10;
-      if (services.includes("transcription")) total += lengthMin * 1.00;
-      if (services.includes("subtitling")) total += lengthMin * 1.25;
-
-      if (isRush) total *= 1.25;
-
-      return total;
-    }
-
-    // Update display of total price
-    function updateTotalDisplay() {
-      const total = calculateTotal();
-      document.getElementById("total-price").textContent = total.toFixed(2);
-    }
-
-    document.getElementById("order-form").addEventListener("change", updateTotalDisplay);
-    document.getElementById("order-form").addEventListener("input", updateTotalDisplay);
-
-    // Initialize PayPal buttons after DOM loads
-    document.addEventListener("DOMContentLoaded", () => {
-      paypal.Buttons({
-        style: {
-          layout: 'vertical',
-          color: 'gold',
-          shape: 'rect',
-          label: 'paypal'
-        },
-        createOrder: function(data, actions) {
-          const price = calculateTotal().toFixed(2);
-          console.log("Creating order with total price:", price); // Log for debugging
-          return actions.order.create({
-            purchase_units: [{
-              amount: { value: price }
-            }]
-          });
-        },
-        onApprove: async function(data, actions) {
-          console.log("Approving order..."); // Log for debugging
-          // Inside the onApprove function:
-try {
-    console.log("Order approved. Capturing payment...");
-    const captureResult = await actions.order.capture();
-    console.log("Payment captured successfully:", captureResult);
-
-    // Create the order details for Firebase
-    const form = document.getElementById('order-form');
-    const formData = new FormData(form);
-    const orderID = `ORD-${Date.now()}`;
-
-    const order = {
-        orderID,
-        customerEmail: formData.get("customerEmail"),
-        sourceLang: formData.get("sourceLang"),
-        targetLangs: formData.getAll("targetLangs"),
-        services: formData.getAll("service"),
-        wordCount: formData.get("wordCount") || 0,
-        lengthMin: formData.get("lengthMin") || 0,
-        rush: formData.get("rush") === "true",
-        notes: formData.get("notes"),
-        paid: true,
-        totalPaid: calculateTotal().toFixed(2),
-        timestamp: new Date().toISOString()
-    };
-
-    console.log("Saving order to Firebase:", order);
-
-    await db.collection("orders").doc(orderID).set(order);
-    console.log("Order saved successfully to Firebase.");
-
-    const files = document.getElementById("fileInput").files;
-    const fileLinks = [];
-    
-    for (const file of files) {
-        const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
-        const snapshot = await fileRef.put(file);
-        const url = await fileRef.getDownloadURL();
-        console.log(`Uploaded file: ${file.name} URL: ${url}`);
-        fileLinks.push(url);
-    }
-
-    await db.collection("mail").add({
-        to: ["mbounejmate@gmail.com"],
-        message: {
-            subject: `New Order Received: ${orderID}`,
-            html: `
-                <p><strong>Order ID:</strong> ${orderID}</p>
-                <p><strong>Email:</strong> ${order.customerEmail}</p>
-                <p><strong>Services:</strong> ${order.services.join(", ")}</p>
-                <p><strong>Languages:</strong> ${order.sourceLang} → ${order.targetLangs.join(", ")}</p>
-                <p><strong>Word Count:</strong> ${order.wordCount}</p>
-                <p><strong>Length (min):</strong> ${order.lengthMin}</p>
-                <p><strong>Rush:</strong> ${order.rush ? "Yes" : "No"}</p>
-                <p><strong>Notes:</strong> ${order.notes}</p>
-                <p><strong>Files:</strong></p>
-                <ul>${fileLinks.map(link => `<li><a href="${link}">${link}</a></li>`).join("")}</ul>
-            `
-        }
-    });
-
-    alert("Order placed and payment received!");
-    form.reset();
-    updateTotalDisplay();
-} catch (err) {
-    console.error("Error processing the order:", err);
-    alert("Something went wrong. Please try again later.");
-}
-        onError: function(err) {
-          console.error("PayPal error:", err);
-          alert("Payment could not be completed. Please try again.");
-        }
-      }).render('#paypal-button-container');
-    });
-  </script>
+  <script src="js/order-script.js"></script>
 </body>
 </html>
