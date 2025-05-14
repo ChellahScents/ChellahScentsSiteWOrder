@@ -51,7 +51,7 @@ const firebaseConfig = {
   
   // Calculate total price for services
   function calculateTotal() {
-    const MINIMUM_CHARGE = 5.00;
+    const MINIMUM_CHARGE = 0.00;
     const form = document.getElementById('order-form');
     const services = [...form.querySelectorAll('input[name="service"]:checked')].map(el => el.value);
     const wordCount = parseInt(form.wordCount?.value || "0");
