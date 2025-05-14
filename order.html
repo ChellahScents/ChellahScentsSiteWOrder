@@ -44,7 +44,7 @@
         <p class="order-intro">Complete the form below, upload your files, choose your delivery speed, then pay securely.</p>
       </div>
 
-      <form id="order-form">
+      <form id="order-form" enctype="multipart/form-data">
         <input type="hidden" name="orderNumber" id="orderNumber" value="">
 
         <label>Your Email (Deliver To)
@@ -68,6 +68,9 @@
             <option>English</option>
             <option>French</option>
             <option>Arabic</option>
+            <option>Spanish</option>
+            <option>Mandarin</option>
+            <option>Hindi</option>
           </select>
           <small>Ctrl/Cmd + click to select multiple</small>
         </label>
@@ -97,7 +100,8 @@
         </label>
 
         <label>Upload Your Files
-          <input type="file" name="attachments" id="fileInput" multiple required>
+          <input type="file" name="attachments" id="fileInput" multiple required accept=".pdf,.doc,.docx,.txt,.jpg,.png,.mp3,.mp4">
+          <small>Accepted file types: PDF, DOC, TXT, Image, Audio, Video</small>
         </label>
 
         <label>Additional Instructions
