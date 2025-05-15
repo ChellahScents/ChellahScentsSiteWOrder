@@ -84,29 +84,50 @@ const firebaseConfig = {
       },
   
       onApprove: async function (data, actions) {
+        console.log("✅ PayPal payment approved");
         try {
           const captureResult = await actions.order.capture();
+          console.log("✅ Payment captured:", captureResult);
+      
           const formData = new FormData(form);
           const orderID = `ORD-${Date.now()}`;
           const files = document.getElementById("fileInput").files;
+      
+          console.log("🟡 Preparing upload. Files selected:", files.length);
           let fileLinks = [];
-  
-          try {
-            const fileUploadPromises = Array.from(files).map(async (file) => {
-              const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
-              const metadata = { contentType: file.type || 'application/octet-stream' };
-              const snapshot = await fileRef.put(file, metadata);
-              return await fileRef.getDownloadURL();
-            });
-  
-            fileLinks = await Promise.all(fileUploadPromises);
-            console.log("✅ All files uploaded");
-          } catch (uploadErr) {
-            console.error("❌ Upload failed:", uploadErr);
-            alert("❌ File upload failed. Please try again.");
+      
+          if (files.length === 0) {
+            alert("❌ No files selected.");
             return;
           }
-  
+      
+          const uploadResults = await Promise.allSettled(
+            Array.from(files).map(async (file) => {
+              try {
+                console.log("📤 Uploading file:", file.name);
+                const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
+                const metadata = { contentType: file.type || 'application/octet-stream' };
+                const snapshot = await fileRef.put(file, metadata);
+                const url = await fileRef.getDownloadURL();
+                console.log("✅ Uploaded:", url);
+                return url;
+              } catch (e) {
+                console.error("❌ Failed upload for", file.name, e);
+                throw e;
+              }
+            })
+          );
+      
+          // Filter successful links
+          fileLinks = uploadResults
+            .filter(result => result.status === "fulfilled")
+            .map(result => result.value);
+      
+          if (fileLinks.length === 0) {
+            alert("❌ All uploads failed due to CORS or auth. Nothing saved.");
+            return;
+          }
+      
           const order = {
             orderID,
             customerEmail: formData.get("customerEmail"),
@@ -122,25 +143,27 @@ const firebaseConfig = {
             timestamp: new Date().toISOString(),
             fileLinks
           };
-  
+      
+          console.log("📝 Writing order to Firestore:", order);
           await db.collection("orders").doc(orderID).set(order);
-          console.log("✅ Order saved to Firestore");
-  
+          console.log("✅ Firestore write complete");
+      
           document.body.insertAdjacentHTML('beforeend', `
             <div id="confirmation" style="background:#d4edda;color:#155724;padding:1em;margin:1em 0;border:1px solid #c3e6cb;border-radius:5px;">
               ✅ <strong>Order ${orderID}</strong> placed successfully!<br>
               A confirmation has been sent to <strong>${formData.get("customerEmail")}</strong>.
             </div>
           `);
-  
+      
           form.reset();
           updateTotalDisplay();
+      
         } catch (err) {
-          console.error("❌ Final order error:", err);
+          console.error("❌ Unhandled order error:", err);
           alert("❌ Something went wrong after payment. Please contact support.");
         }
-      },
-  
+      }
+      
       onError: function (err) {
         console.error("❌ PayPal Button Error:", err);
         alert("Payment could not be completed. Please try again or contact support.");
