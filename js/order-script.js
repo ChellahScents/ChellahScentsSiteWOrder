@@ -1,11 +1,9 @@
-// Enhanced order-script.js
-// Handles dynamic file inputs, PayPal integration, Firebase upload & Firestore
-
+// Enhanced order-script.js with proper upload error handling and sweet confirmation
 const firebaseConfig = {
     apiKey: "AIzaSyBIIyuFigBoRR7Ev9wULduht3nx5kxp6i4",
     authDomain: "chellah-orders.firebaseapp.com",
     projectId: "chellah-orders",
-    storageBucket: "chellah-orders.appspot.com",
+    storageBucket: "chellah-orders",
     messagingSenderId: "577794209323",
     appId: "1:577794209323:web:6da2e20a2ddc1718945c6e"
   };
@@ -34,11 +32,14 @@ const firebaseConfig = {
     const email = form.customerEmail.value;
     const sourceLang = form.sourceLang.value;
     const targetLangs = [...form.targetLangs.selectedOptions].map(opt => opt.value);
+    const files = document.getElementById("fileInput").files;
   
     if (services.length === 0) return alert('Please select at least one service'), false;
     if (!email || !email.includes('@')) return alert('Please enter a valid email address'), false;
     if (!sourceLang) return alert('Please select a source language'), false;
     if (targetLangs.length === 0) return alert('Please select at least one target language'), false;
+    if (files.length === 0) return alert('Please upload at least one file'), false;
+  
     return true;
   }
   
@@ -76,7 +77,6 @@ const firebaseConfig = {
           console.error("❌ Form validation failed");
           return Promise.reject("Form validation failed");
         }
-  
         const price = calculateTotal().toFixed(2);
         return actions.order.create({
           purchase_units: [{ amount: { value: price } }]
@@ -86,20 +86,26 @@ const firebaseConfig = {
       onApprove: async function (data, actions) {
         try {
           const captureResult = await actions.order.capture();
-  
           const formData = new FormData(form);
           const orderID = `ORD-${Date.now()}`;
-          const fileInput = document.getElementById("fileInput");
-          const files = fileInput.files;
+          const files = document.getElementById("fileInput").files;
+          let fileLinks = [];
   
-          const fileUploadPromises = Array.from(files).map(async (file) => {
-            const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
-            const metadata = { contentType: file.type || 'application/octet-stream' };
-            const snapshot = await fileRef.put(file, metadata);
-            return await fileRef.getDownloadURL();
-          });
+          try {
+            const fileUploadPromises = Array.from(files).map(async (file) => {
+              const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
+              const metadata = { contentType: file.type || 'application/octet-stream' };
+              const snapshot = await fileRef.put(file, metadata);
+              return await fileRef.getDownloadURL();
+            });
   
-          const fileLinks = await Promise.all(fileUploadPromises);
+            fileLinks = await Promise.all(fileUploadPromises);
+            console.log("✅ All files uploaded");
+          } catch (uploadErr) {
+            console.error("❌ Upload failed:", uploadErr);
+            alert("❌ File upload failed. Please try again.");
+            return;
+          }
   
           const order = {
             orderID,
@@ -118,6 +124,7 @@ const firebaseConfig = {
           };
   
           await db.collection("orders").doc(orderID).set(order);
+          console.log("✅ Order saved to Firestore");
   
           document.body.insertAdjacentHTML('beforeend', `
             <div id="confirmation" style="background:#d4edda;color:#155724;padding:1em;margin:1em 0;border:1px solid #c3e6cb;border-radius:5px;">
@@ -129,7 +136,7 @@ const firebaseConfig = {
           form.reset();
           updateTotalDisplay();
         } catch (err) {
-          console.error("❌ Order processing error:", err);
+          console.error("❌ Final order error:", err);
           alert("❌ Something went wrong after payment. Please contact support.");
         }
       },
@@ -144,4 +151,3 @@ const firebaseConfig = {
     form.addEventListener("change", updateTotalDisplay);
     form.addEventListener("input", updateTotalDisplay);
   });
-  
