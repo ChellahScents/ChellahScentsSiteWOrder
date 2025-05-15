@@ -1,48 +1,32 @@
-// Firebase Function: sendOrderEmails
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-admin.initializeApp();
-
-const gmailEmail = "order@chellah-scents.com";
-const gmailPassword = "GL4HS&CbA4Nm3bH&"; // Replace with your Google App Password
-
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: gmailEmail,
-    pass: gmailPassword
+exports.handler = async function(event) {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
-});
 
-exports.sendOrderEmails = functions.firestore
-  .document("orders/{orderId}")
-  .onCreate(async (snap, context) => {
-    const order = snap.data();
+  const formData = JSON.parse(event.body); // for simple field-only data
+  const { customerEmail, sourceLang, targetLangs, service, wordCount, lengthMin, rush, notes } = formData;
 
-    const emailText = `
-New order received from ${order.customerEmail}:
-Order ID: ${order.orderID}
-Services: ${order.services.join(", ")}
-Source: ${order.sourceLang}
-Target: ${order.targetLangs.join(", ")}
-Total Paid: $${order.totalPaid}
+  const msg = {
+    to: 'mbounejmate@gmail.com',
+    from: 'orders@chellah-scents.com',
+    subject: 'New Order Received',
+    text: `Email: ${customerEmail}
+Source Language: ${sourceLang}
+Target Language(s): ${targetLangs}
+Services: ${service}
+Word Count: ${wordCount}
+Length: ${lengthMin} minutes
+Rush: ${rush}
+Notes: ${notes}`,
+  };
 
-Notes:
-${order.notes || "None"}
-
-Download links:
-${order.fileLinks.join("\n")}
-    `;
-
-    const mailOptions = {
-      from: `Chellah Scents <${gmailEmail}>`,
-      to: [order.customerEmail, "mbounejmate@gmail.com"],
-      subject: `Your Order ${order.orderID} Confirmation`,
-      text: emailText
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log("✅ Confirmation email sent");
-  });
+  try {
+    await sgMail.send(msg);
+    return { statusCode: 200, body: JSON.stringify({ message: 'Order email sent!' }) };
+  } catch (err) {
+    return { statusCode: 500, body: JSON.stringify({ error: 'Email failed to send' }) };
+  }
+};

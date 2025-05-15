@@ -96,12 +96,24 @@
           Delivery in under 12 hours (+25% surcharge)
         </label>
 
-        <label>Upload Your Files
+        <!--<label>Upload Your Files
           <input type="file" name="attachments" id="fileInput" multiple required accept=".pdf,.doc,.docx,.txt,.jpg,.png,.mp3,.mp4">
           <small>Accepted file types: PDF, DOC, TXT, Image, Audio, Video</small>
+        </label>-->
+
+        <label>Translation Files
+            <input type="file" name="translationFiles" multiple accept=".pdf,.doc,.txt,.jpg,.png,.mp3,.mp4">
+        </label>
+        
+        <label>Transcription Files
+            <input type="file" name="transcriptionFiles" multiple accept=".mp3,.mp4,.wav">
+        </label>
+        
+        <label>Subtitling Files
+            <input type="file" name="subtitlingFiles" multiple accept=".mp4,.srt,.vtt">
         </label>
 
-        <label>Additional Instructions
+        <label>Addit    ional Instructions
           <textarea name="notes" rows="3" placeholder="Any special requests?"></textarea>
         </label>
 
