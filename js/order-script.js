@@ -162,7 +162,7 @@ const firebaseConfig = {
           console.error("❌ Unhandled order error:", err);
           alert("❌ Something went wrong after payment. Please contact support.");
         }
-      }
+      },
       
       onError: function (err) {
         console.error("❌ PayPal Button Error:", err);
