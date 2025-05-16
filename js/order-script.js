@@ -1,4 +1,4 @@
-// Enhanced order-script.js with proper upload error handling and sweet confirmation
+// Enhanced order-script.js with proper upload handling and sweet confirmation for individual service blocks
 const firebaseConfig = {
     apiKey: "AIzaSyBIIyuFigBoRR7Ev9wULduht3nx5kxp6i4",
     authDomain: "chellah-orders.firebaseapp.com",
@@ -14,29 +14,28 @@ const storage = firebase.storage();
 
 function calculateTotal() {
   const form = document.getElementById('order-form');
-  const services = [...form.querySelectorAll('input[name="service"]:checked')].map(el => el.value);
-  const wordCount = parseInt(form.wordCount?.value || "0");
-  const lengthMin = parseInt(form.lengthMin?.value || "0");
-  const isRush = form.rush?.checked;
   let total = 0;
-  if (services.includes("translation")) total += wordCount * 0.10;
-  if (services.includes("transcription")) total += lengthMin * 1.00;
-  if (services.includes("subtitling")) total += lengthMin * 1.25;
+
+  const translationChecked = form.querySelector('#translation-check').checked;
+  const transcriptionChecked = form.querySelector('#transcription-check').checked;
+  const subtitlingChecked = form.querySelector('#subtitling-check').checked;
+
+  const wordCount = parseInt(form.querySelector('#wordCount')?.value || "0");
+  const lengthMin = parseInt(form.querySelector('#lengthMin')?.value || "0");
+  const isRush = form.querySelector('#rush')?.checked;
+
+  if (translationChecked) total += wordCount * 0.10;
+  if (transcriptionChecked) total += lengthMin * 1.00;
+  if (subtitlingChecked) total += lengthMin * 1.25;
   if (isRush) total *= 1.25;
   return Math.max(total, 0.00);
 }
 
 function validateForm() {
   const form = document.getElementById('order-form');
-  const services = form.querySelectorAll('input[name="service"]:checked');
-  const email = form.customerEmail.value;
-  const sourceLang = form.sourceLang.value;
-  const targetLangs = [...form.targetLangs.selectedOptions].map(opt => opt.value);
+  const email = form.querySelector('#customerEmail').value;
 
-  if (services.length === 0) return alert('Please select at least one service'), false;
   if (!email || !email.includes('@')) return alert('Please enter a valid email address'), false;
-  if (!sourceLang) return alert('Please select a source language'), false;
-  if (targetLangs.length === 0) return alert('Please select at least one target language'), false;
   return true;
 }
 
@@ -47,19 +46,6 @@ function updateTotalDisplay() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("order-form");
-  const serviceCheckboxes = document.querySelectorAll('input[name="service"]');
-  const translationFields = document.getElementById('translation-fields');
-  const audioFields = document.getElementById('audio-fields');
-
-  serviceCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-      translationFields.classList.toggle('hidden', !form.querySelector('input[value="translation"]:checked'));
-      audioFields.classList.toggle('hidden',
-        !form.querySelector('input[value="transcription"]:checked') &&
-        !form.querySelector('input[value="subtitling"]:checked')
-      );
-    });
-  });
 
   paypal.Buttons({
     style: {
@@ -89,64 +75,66 @@ document.addEventListener("DOMContentLoaded", () => {
         const formData = new FormData(form);
         const orderID = `ORD-${Date.now()}`;
 
-        const translationFiles = form.querySelector('input[name="translationFiles"]').files;
-        const transcriptionFiles = form.querySelector('input[name="transcriptionFiles"]').files;
-        const subtitlingFiles = form.querySelector('input[name="subtitlingFiles"]').files;
+        const services = [];
+        const fileLinks = [];
 
-        const allFiles = [
-          ...translationFiles,
-          ...transcriptionFiles,
-          ...subtitlingFiles
+        const serviceGroups = [
+          {
+            name: 'translation',
+            checked: form.querySelector('#translation-check').checked,
+            source: form.querySelector('#translationSource')?.value,
+            target: form.querySelector('#translationTarget')?.value,
+            files: form.querySelector('#translationFiles')?.files,
+            count: parseInt(form.querySelector('#wordCount')?.value || "0")
+          },
+          {
+            name: 'transcription',
+            checked: form.querySelector('#transcription-check').checked,
+            source: form.querySelector('#transcriptionSource')?.value,
+            target: form.querySelector('#transcriptionTarget')?.value,
+            files: form.querySelector('#transcriptionFiles')?.files,
+            count: parseInt(form.querySelector('#lengthMin')?.value || "0")
+          },
+          {
+            name: 'subtitling',
+            checked: form.querySelector('#subtitling-check').checked,
+            source: form.querySelector('#subtitlingSource')?.value,
+            target: form.querySelector('#subtitlingTarget')?.value,
+            files: form.querySelector('#subtitlingFiles')?.files,
+            count: parseInt(form.querySelector('#lengthMin')?.value || "0")
+          }
         ];
 
-        console.log("🟡 Preparing upload. Files selected:", allFiles.length);
+        for (const svc of serviceGroups) {
+          if (!svc.checked) continue;
+          services.push({
+            type: svc.name,
+            sourceLang: svc.source,
+            targetLang: svc.target,
+            unitCount: svc.count
+          });
 
-        let fileLinks = [];
-        const uploadResults = await Promise.allSettled(
-          Array.from(allFiles).map(async (file) => {
-            try {
-              console.log("📤 Uploading file:", file.name);
-              const fileRef = storage.ref(`orders/${orderID}/${file.name}`);
-              const metadata = { contentType: file.type || 'application/octet-stream' };
-              const snapshot = await fileRef.put(file, metadata);
-              const url = await fileRef.getDownloadURL();
-              console.log("✅ Uploaded:", url);
-              return url;
-            } catch (e) {
-              console.error("❌ Failed upload for", file.name, e);
-              throw e;
-            }
-          })
-        );
-
-        fileLinks = uploadResults
-          .filter(result => result.status === "fulfilled")
-          .map(result => result.value);
-
-        if (fileLinks.length === 0) {
-          alert("❌ All uploads failed due to CORS or auth. Nothing saved.");
-          return;
+          for (let file of svc.files) {
+            const fileRef = storage.ref(`orders/${orderID}/${svc.name}/${file.name}`);
+            const snapshot = await fileRef.put(file);
+            const url = await fileRef.getDownloadURL();
+            fileLinks.push(url);
+          }
         }
 
         const order = {
           orderID,
           customerEmail: formData.get("customerEmail"),
-          sourceLang: formData.get("sourceLang"),
-          targetLangs: formData.getAll("targetLangs"),
-          services: formData.getAll("service"),
-          wordCount: formData.get("wordCount") || 0,
-          lengthMin: formData.get("lengthMin") || 0,
           rush: formData.get("rush") === "true",
           notes: formData.get("notes"),
+          services,
           paid: true,
           totalPaid: calculateTotal().toFixed(2),
           timestamp: new Date().toISOString(),
           fileLinks
         };
 
-        console.log("📝 Writing order to Firestore:", order);
         await db.collection("orders").doc(orderID).set(order);
-        console.log("✅ Firestore write complete");
 
         const confirmationBox = document.createElement("div");
         confirmationBox.style.cssText = `

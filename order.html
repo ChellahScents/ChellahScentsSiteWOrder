@@ -1,139 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Order Services • Chellah Scents</title>
-
-  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-  <!-- PayPal Smart Buttons SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id=BAATnBGQXYI0HMbpx7ZaSd6JZ3g0lyXYzc8g9Ew-016JDolN8YbMVuqlRiL682Ka3ArrULuJ_xz-xziw-8&components=buttons&disable-funding=venmo&currency=USD"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
 </head>
 <body>
-  <div class="zellige-bg"></div>
+<div class="zellige-bg"></div>
+<main class="order-section">
+  <h1 class="form-title">Order Transcription • Translation • Subtitling</h1>
+  <p class="form-subtitle">Complete the form below, upload your files, choose your delivery speed, then pay securely.</p>
 
-  <header>
-    <nav class="navbar">
-      <a href="index.html" class="nav-logo"><img src="img/logo.png" alt="Chellah Scents Logo"></a>
-      <button class="nav-toggle" aria-label="Toggle menu">☰</button>
-      <ul class="nav-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="consulting.html">Consulting</a></li>
-        <li><a href="printing.html">3D Printing</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="order.html" class="active">Order</a></li>
-      </ul>
-    </nav>
-  </header>
+  <form id="order-form">
+    <label for="customerEmail">Your Email (Deliver To)</label>
+    <input type="email" name="customerEmail" placeholder="you@example.com" required />
 
-  <main>
-    <section class="order-section">
-      <div class="order-header">
-        <h2>Order Transcription · Translation · Subtitling</h2>
-        <p class="order-intro">Complete the form below, upload your files, choose your delivery speed, then pay securely.</p>
-      </div>
+    <!-- Section for Translation -->
+    <fieldset class="service-block">
+      <legend><input type="checkbox" name="service" value="translation"> Translation</legend>
 
-      <form id="order-form" enctype="multipart/form-data">
-        <input type="hidden" name="orderNumber" id="orderNumber" value="">
+      <label>Original Language</label>
+      <select name="translationSourceLang">
+        <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
+      </select>
 
-        <label>Your Email (Deliver To)
-          <input type="email" name="customerEmail" required placeholder="you@example.com">
-        </label>
+      <label>Target Language(s)</label>
+      <select name="translationTargetLangs" multiple>
+        <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
+      </select>
 
-        <label>Original Language
-          <input list="allLangs" name="sourceLang" required>
-          <datalist id="allLangs">
-            <option value="English">
-            <option value="French">
-            <option value="Arabic">
-            <option value="Spanish">
-            <option value="Mandarin">
-            <option value="Hindi">
-          </datalist>
-        </label>
+      <label>Upload Files</label>
+      <input type="file" name="translationFiles" multiple>
 
-        <label>Target Language(s)
-          <select name="targetLangs" multiple size="3" required>
-            <option>English</option>
-            <option>French</option>
-            <option>Arabic</option>
-            <option>Spanish</option>
-            <option>Mandarin</option>
-            <option>Hindi</option>
-          </select>
-          <small>Ctrl/Cmd + click to select multiple</small>
-        </label>
+      <label>Approx. Word Count</label>
+      <input type="number" name="wordCount" placeholder="e.g. 1200">
+    </fieldset>
 
-        <fieldset>
-          <legend>Select Service(s)</legend>
-          <label><input type="checkbox" name="service" value="translation"> Translation</label>
-          <label><input type="checkbox" name="service" value="transcription"> Transcription</label>
-          <label><input type="checkbox" name="service" value="subtitling"> Subtitle (SRT)</label>
-        </fieldset>
+    <!-- Section for Transcription -->
+    <fieldset class="service-block">
+      <legend><input type="checkbox" name="service" value="transcription"> Transcription</legend>
 
-        <div id="translation-fields" class="hidden">
-          <label>Approx. Word Count
-            <input type="number" name="wordCount" min="0" value="0">
-          </label>
-        </div>
+      <label>Original Language</label>
+      <select name="transcriptionSourceLang">
+        <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
+      </select>
 
-        <div id="audio-fields" class="hidden">
-          <label>Audio/Video Length (minutes)
-            <input type="number" name="lengthMin" min="0" value="0">
-          </label>
-        </div>
+      <label>Target Language(s)</label>
+      <select name="transcriptionTargetLangs" multiple>
+        <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
+      </select>
 
-        <label class="rush-label">
-          <input type="checkbox" name="rush" value="true">
-          Delivery in under 12 hours (+25% surcharge)
-        </label>
+      <label>Upload Files</label>
+      <input type="file" name="transcriptionFiles" multiple>
 
-        <!--<label>Upload Your Files
-          <input type="file" name="attachments" id="fileInput" multiple required accept=".pdf,.doc,.docx,.txt,.jpg,.png,.mp3,.mp4">
-          <small>Accepted file types: PDF, DOC, TXT, Image, Audio, Video</small>
-        </label>-->
+      <label>Audio/Video Length (minutes)</label>
+      <input type="number" name="lengthMin" placeholder="e.g. 30">
+    </fieldset>
 
-        <label>Translation Files
-            <input type="file" name="translationFiles" multiple accept=".pdf,.doc,.txt,.jpg,.png,.mp3,.mp4">
-        </label>
-        
-        <label>Transcription Files
-            <input type="file" name="transcriptionFiles" multiple accept=".mp3,.mp4,.wav">
-        </label>
-        
-        <label>Subtitling Files
-            <input type="file" name="subtitlingFiles" multiple accept=".mp4,.srt,.vtt">
-        </label>
+    <!-- Section for Subtitling -->
+    <fieldset class="service-block">
+      <legend><input type="checkbox" name="service" value="subtitling"> Subtitling (SRT)</legend>
 
-        <label>Addit    ional Instructions
-          <textarea name="notes" rows="3" placeholder="Any special requests?"></textarea>
-        </label>
+      <label>Original Language</label>
+      <select name="subtitlingSourceLang">
+        <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
+      </select>
 
-        <p><strong>Total: $<span id="total-price">0.00</span></strong></p>
+      <label>Target Language(s)</label>
+      <select name="subtitlingTargetLangs" multiple>
+        <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
+      </select>
 
-        <div id="paypal-button-container"></div>
-      </form>
+      <label>Upload Files</label>
+      <input type="file" name="subtitlingFiles" multiple>
 
-      <p class="eta-notice">
-        Standard turnaround: 24–48 hours.<br>
-        Rush turnaround: under 12 hours (+25%).<br>
-        Questions? Email <a href="mailto:contact@chellah-scents.com">contact@chellah-scents.com</a>.
-      </p>
-    </section>
-  </main>
+      <label>Audio/Video Length (minutes)</label>
+      <input type="number" name="subtitlingLengthMin" placeholder="e.g. 30">
+    </fieldset>
 
-  <footer>
-    <p>© 2024 Chellah Scents · Rooted Past, Soaring Future</p>
-  </footer>
+    <label>Additional Instructions</label>
+    <textarea name="notes" placeholder="Any special requests?"></textarea>
 
-  <script src="js/order-script.js"></script>
+    <div id="total-price" class="total-display">Total: $0.00</div>
+    <div id="paypal-button-container" class="paypal-button-container"></div>
+  </form>
+
+  <p class="eta-notice">
+    Standard turnaround: 24–48 hours.<br>
+    Rush turnaround: under 12 hours (+25%).<br>
+    Questions? Email <a href="mailto:contact@chellah-scents.com">contact@chellah-scents.com</a>.
+  </p>
+</main>
+
+<footer>
+  <p>© 2025 Chellah Scents · Rooted Past, Soaring Future</p>
+</footer>
+
+<script src="js/order-script.js"></script>
 </body>
 </html>

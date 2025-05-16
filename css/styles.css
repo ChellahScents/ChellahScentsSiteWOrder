@@ -20,6 +20,9 @@ body {
   --light-bg:  #F9F7F3;
   --accent:    #E8E4DA;
   --dark:      #1A1A1A;
+  --box-bg:    #ffffff;
+  --border:    #ddd;
+  --field-bg:  #f8f8f8;
 }
 
 /* ZELLIGE BACKGROUND */
@@ -81,26 +84,50 @@ a:hover {
 
 /* ORDER FORM */
 .order-section {
-  max-width: 600px;
+  max-width: 720px;
   margin: 2rem auto;
-  background: #fff;
+  background: var(--box-bg);
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  border: 1px solid var(--border);
 }
 input[type], select, textarea {
   width: 100%;
-  padding: 0.7rem;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: var(--field-bg);
+  margin-bottom: 1.2rem;
   font-size: 1rem;
   transition: all 0.2s ease;
 }
 input[type]:focus, textarea:focus, select:focus {
   border-color: var(--mor-green);
-  box-shadow: 0 0 0 2px rgba(0,105,62,0.1);
+  box-shadow: 0 0 0 2px rgba(0,105,62,0.15);
   outline: none;
+}
+label {
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  display: block;
+  color: var(--dark);
+}
+
+.service-block {
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--mor-green);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.service-block legend {
+  font-weight: 600;
+  color: var(--mor-green);
+  font-size: 1.1rem;
+  padding-bottom: 0.5rem;
 }
 
 /* BUTTONS */
@@ -130,7 +157,7 @@ input[type]:focus, textarea:focus, select:focus {
 
 /* PayPal container */
 .paypal-button-container {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   text-align: center;
 }
 
@@ -139,4 +166,6 @@ footer {
   padding: 1rem;
   background: var(--accent);
   border-top: 2px solid var(--mor-green);
+  font-size: 0.9rem;
+  color: var(--dark);
 }
