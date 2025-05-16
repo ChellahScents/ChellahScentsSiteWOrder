@@ -17,17 +17,25 @@ exports.handler = async (event) => {
       const order = {
         number: fields.orderNumber,
         customerEmail: fields.customerEmail,
-        sourceLang: fields.sourceLang,
-        targetLangs: fields.targetLangs,
-        services: fields.service,
-        wordCount: fields.wordCount,
-        lengthMin: fields.lengthMin,
-        rush: !!fields.rush,
+        rush: fields.rush === 'true',
         notes: fields.notes,
         total: fields.totalPrice,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        services: []
       };
-
+      
+      // Reconstruct services from flattened fields
+      ['translation', 'transcription', 'subtitling'].forEach(type => {
+        if (fields[`${type}Source`] && fields[`${type}Target`]) {
+          order.services.push({
+            type,
+            sourceLang: fields[`${type}Source`],
+            targetLang: fields[`${type}Target`],
+            unitCount: fields[`${type}UnitCount`] || 0
+          });
+        }
+      });
+      
       // ### Persist order (e.g. append to a JSON file) ###
       const dbPath = './orders.json';
       let db = [];
@@ -63,12 +71,13 @@ exports.handler = async (event) => {
         to: [ 'mbounejmate@gmail.com', fields.customerEmail ],
         subject: `New Order ${order.number}`,
         text: `
-Order #: ${order.number}
-Customer: ${order.customerEmail}
-Services: ${order.services}
-Words: ${order.wordCount}, Minutes: ${order.lengthMin}, Rush: ${order.rush}
-Total: $${order.total}
-Notes: ${order.notes}
+        Order #: ${order.number}
+        Customer: ${order.customerEmail}
+        Services: 
+        ${order.services.map(s => ` - ${s.type} (${s.sourceLang} → ${s.targetLang}) | Units: ${s.unitCount}`).join('\n')}
+        Rush: ${order.rush}
+        Total: $${order.total}
+        Notes: ${order.notes}    
         `,
         attachments
       };
