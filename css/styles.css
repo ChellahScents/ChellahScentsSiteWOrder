@@ -183,8 +183,8 @@ footer {
   }*/
   .service-title {
     display: flex;
-    align-items: left;
-    gap: 0.5rem;
+    align-items: right;
+    gap: 0.3rem;
     margin-bottom: 1rem;
     font-weight: 600;
     color: var(--mor-green);
