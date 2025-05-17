@@ -181,4 +181,13 @@ footer {
     transform: scale(1.2);
     margin: 0;
   }
+  .service-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--mor-green);
+  }
   
