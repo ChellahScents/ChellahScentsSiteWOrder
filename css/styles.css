@@ -190,6 +190,9 @@ footer {
     font-weight: 600;
     color: var(--mor-green);
   }
-  
+  .service-title input[type="checkbox"] {
+    margin: 0;
+  }
+    
   
   
