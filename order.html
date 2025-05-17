@@ -33,9 +33,10 @@
     <input type="email" name="customerEmail" id="customerEmail" placeholder="you@example.com" required />
   
     <!-- Section for Translation -->
-    <fieldset class="checkbox-inline">
-      <legend><input type="checkbox" name="service" value="translation" id="translation-check"> Translation</legend>
-  
+    <div class="checkbox-inline">
+        <input type="checkbox" name="service" value="translation" id="translation-check">
+        <label for="translation-check">Translation</label>
+    </div>
       <label for="translationSource">Original Language</label>
       <select name="translationSourceLang" id="translationSource">
         <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
@@ -54,9 +55,11 @@
     </fieldset>
   
     <!-- Section for Transcription -->
-    <fieldset class="checkbox-inline">
-      <legend><input type="checkbox" name="service" value="transcription" id="transcription-check"> Transcription</legend>
-  
+    <div class="checkbox-inline">
+        <input type="checkbox" name="service" value="transcription" id="transcription-check">
+        <label for="transcription-check">Transcription</label>
+    </div>
+    
       <label for="transcriptionSource">Original Language</label>
       <select name="transcriptionSourceLang" id="transcriptionSource">
         <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
@@ -75,9 +78,10 @@
     </fieldset>
   
     <!-- Section for Subtitling -->
-    <fieldset class="checkbox-inline">
-      <legend><input type="checkbox" name="service" value="subtitling" id="subtitling-check"> Subtitling (SRT)</legend>
-  
+     <div class="checkbox-inline">
+        <input type="checkbox" name="service" value="subtitling" id="subtitling-check">
+        <label for="subtitling">Subtitling (SRT)</label>
+    </div>
       <label for="subtitlingSource">Original Language</label>
       <select name="subtitlingSourceLang" id="subtitlingSource">
         <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>

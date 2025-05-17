@@ -169,17 +169,16 @@ footer {
   font-size: 0.9rem;
   color: var(--dark);
 }
-
-.checkbox-inline {
+  .checkbox-inline {
     display: flex;
     align-items: center;
     gap: 0.5em;
-    font-weight: 500;
     margin: 1em 0;
+    font-size: 1rem;
   }
   
   .checkbox-inline input[type="checkbox"] {
-    margin: 0;
     transform: scale(1.2);
+    margin: 0;
   }
   
