@@ -169,7 +169,7 @@ footer {
   font-size: 0.9rem;
   color: var(--dark);
 }
-  .checkbox-inline {
+ /*<!-- .checkbox-inline {
     display: flex;
     align-items: center;
     gap: 0.5em;
@@ -180,7 +180,7 @@ footer {
   .checkbox-inline input[type="checkbox"] {
     transform: scale(1.2);
     margin: 0;
-  }
+  }*/
   .service-title {
     display: flex;
     align-items: left;
