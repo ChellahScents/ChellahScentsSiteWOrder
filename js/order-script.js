@@ -128,7 +128,6 @@ const firebaseConfig = {
               fileLinks.push(url);
             }
           }
-  
           const order = {
             orderID,
             customerEmail: formData.get("customerEmail"),
@@ -138,9 +137,9 @@ const firebaseConfig = {
             paid: true,
             totalPaid: calculateTotal().toFixed(2),
             timestamp: new Date().toISOString(),
-            fileLinks
+            fileLinks: fileLinks || []  // 👈 ensure it's always an array
           };
-  
+          
           await db.collection("orders").doc(orderID).set(order);
   
           const confirmationBox = document.createElement("div");
@@ -157,6 +156,7 @@ const firebaseConfig = {
               New Order
             </button>
           `;
+
           document.body.appendChild(confirmationBox);
   
           form.reset();
