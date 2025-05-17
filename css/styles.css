@@ -112,6 +112,7 @@ label {
   margin-bottom: 0.4rem;
   display: block;
   color: var(--dark);
+  white-space: nowrap;
 }
 
 .service-block {
