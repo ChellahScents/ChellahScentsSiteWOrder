@@ -36,10 +36,10 @@
 
       <!-- Translation -->
       <fieldset class="service-block">
-        <label style="display: flex; align-items: center; justify-content: flex-start; gap: 0.4em; font-weight: 600; color: #00693E;">
-            <input type="checkbox" id="translation-check" name="service" value="translation" style="margin: 0;" />
-            Translation
-          </label>
+        <div style="display: flex; align-items: center; gap: 0.5em;">
+          <input type="checkbox" id="translation-check" name="service" value="translation" style="margin: 0;" />
+          <label for="translation-check" style="font-weight: 600; color: #00693E; margin: 0; display: inline;">Translation</label>
+        </div>
     
         <label for="translationSource">Original Language</label>
         <select id="translationSource" name="translationSourceLang">
@@ -60,7 +60,10 @@
 
       <!-- Transcription -->
       <fieldset class="service-block">
-        <label style="display: flex; align-items: center; justify-content: flex-start; gap: 0.4em; font-weight: 600; color: #00693E;"><input type="checkbox" id="transcription-check" name="service" value="transcription" style="margin: 0;" />Transcription</label>
+        <div style="display: flex; align-items: center; gap: 0.5em;">
+          <input type="checkbox" id="transcription-check" name="service" value="transcription" style="margin: 0;" />
+          <label for="transcription-check" style="font-weight: 600; color: #00693E; margin: 0; display: inline;">Transcription</label>
+        </div>
           
         <label for="transcriptionSource">Original Language</label>
         <select id="transcriptionSource" name="transcriptionSourceLang">
@@ -81,12 +84,11 @@
 
       <!-- Subtitling -->
       <fieldset class="service-block">
-        <label style="display: flex; align-items: center;justify-content: flex-start; gap: 0.4em; font-weight: 600; color: #00693E;">
-            <input type="checkbox" id="subtitling-check" name="service" value="subtitling" style="margin: 0;" />
-            Subtitling
-          </label>
+        <div style="display: flex; align-items: center; gap: 0.5em;">
+          <input type="checkbox" id="subtitling-check" name="service" value="subtitling" style="margin: 0;" />
+          <label for="subtitling-check" style="font-weight: 600; color: #00693E; margin: 0; display: inline;">Subtitling</label>
+        </div>
           
-
         <label for="subtitlingSource">Original Language</label>
         <select id="subtitlingSource" name="subtitlingSourceLang">
           <option>English</option><option>French</option><option>Arabic</option><option>Spanish</option>
@@ -109,9 +111,9 @@
       <textarea id="notes" name="notes" placeholder="Any special requests?"></textarea>
 
       <!-- Rush Delivery -->
-      <div class="service-title">
-        <input type="checkbox" id="rush" name="rush" />
-        <label for="rush">Rush Delivery (+25%)</label>
+      <div class="service-title" style="display: flex; align-items: center; gap: 0.5em;">
+        <input type="checkbox" id="rush" name="rush" style="margin: 0;" />
+        <label for="rush" style="margin: 0; display: inline;">Rush Delivery (+25%)</label>
       </div>
 
       <div id="total-price" class="total-display">0.00</div>
