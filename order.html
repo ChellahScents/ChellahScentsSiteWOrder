@@ -10,6 +10,31 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://www.paypal.com/sdk/js?client-id=AQ0upi0XWyzJyYRVDn3DO2ila86tRQyp171p2qN7Z10-A7sWdtajg_YdYmoC-binyOY6Ku1O6NzOCGbq&currency=USD"></script>
+  
+  <!-- Add this inline style to override any existing styles -->
+  <style>
+    .service-header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 8px !important;
+      width: 100% !important;
+      margin-bottom: 16px !important;
+    }
+    
+    .service-header input[type="checkbox"] {
+      width: auto !important;
+      margin: 0 !important;
+    }
+    
+    .service-header label {
+      display: inline !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-weight: 600 !important;
+      color: #00693E !important;
+    }
+  </style>
 </head>
 <body>
   <header class="navbar">
@@ -36,9 +61,9 @@
 
       <!-- Translation -->
       <fieldset class="service-block">
-        <div style="display: flex; align-items: center; gap: 0.5em;">
-          <input type="checkbox" id="translation-check" name="service" value="translation" style="margin: 0;" />
-          <label for="translation-check" style="font-weight: 600; color: #00693E; margin: 0; display: inline;">Translation</label>
+        <div class="service-header">
+          <input type="checkbox" id="translation-check" name="service" value="translation" />
+          <label for="translation-check">Translation</label>
         </div>
     
         <label for="translationSource">Original Language</label>
@@ -60,9 +85,9 @@
 
       <!-- Transcription -->
       <fieldset class="service-block">
-        <div style="display: flex; align-items: center; gap: 0.5em;">
-          <input type="checkbox" id="transcription-check" name="service" value="transcription" style="margin: 0;" />
-          <label for="transcription-check" style="font-weight: 600; color: #00693E; margin: 0; display: inline;">Transcription</label>
+        <div class="service-header">
+          <input type="checkbox" id="transcription-check" name="service" value="transcription" />
+          <label for="transcription-check">Transcription</label>
         </div>
           
         <label for="transcriptionSource">Original Language</label>
@@ -84,9 +109,9 @@
 
       <!-- Subtitling -->
       <fieldset class="service-block">
-        <div style="display: flex; align-items: center; gap: 0.5em;">
-          <input type="checkbox" id="subtitling-check" name="service" value="subtitling" style="margin: 0;" />
-          <label for="subtitling-check" style="font-weight: 600; color: #00693E; margin: 0; display: inline;">Subtitling</label>
+        <div class="service-header">
+          <input type="checkbox" id="subtitling-check" name="service" value="subtitling" />
+          <label for="subtitling-check">Subtitling</label>
         </div>
           
         <label for="subtitlingSource">Original Language</label>
@@ -111,9 +136,9 @@
       <textarea id="notes" name="notes" placeholder="Any special requests?"></textarea>
 
       <!-- Rush Delivery -->
-      <div class="service-title" style="display: flex; align-items: center; gap: 0.5em;">
-        <input type="checkbox" id="rush" name="rush" style="margin: 0;" />
-        <label for="rush" style="margin: 0; display: inline;">Rush Delivery (+25%)</label>
+      <div class="service-header">
+        <input type="checkbox" id="rush" name="rush" />
+        <label for="rush">Rush Delivery (+25%)</label>
       </div>
 
       <div id="total-price" class="total-display">0.00</div>

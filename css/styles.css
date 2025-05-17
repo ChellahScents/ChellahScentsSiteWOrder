@@ -194,6 +194,34 @@ footer {
   .service-title input[type="checkbox"] {
     margin: 0;
   }*/
-    
+  /* Checkbox styling */
+input[type="checkbox"] {
+    width: auto !important;
+    margin-right: 8px !important;
+  }
+  
+  .service-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1rem !important;
+    font-weight: 600 !important;
+    color: var(--mor-green) !important;
+  }
+  
+  .service-title input[type="checkbox"] {
+    margin: 0 !important;
+  }
+  
+  .checkbox-container {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .checkbox-container label {
+    display: inline !important;
+    margin: 0 0 0 8px !important;
+  }  
   
   
