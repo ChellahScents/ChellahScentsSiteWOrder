@@ -184,10 +184,14 @@ footer {
   .service-title {
     display: flex;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.5rem;
     margin-bottom: 1rem;
     font-weight: 600;
-    font-size: 1.1rem;
     color: var(--mor-green);
   }
+  
+  .service-title input[type="checkbox"] {
+    margin: 0;
+  }
+  
   
