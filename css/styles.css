@@ -183,8 +183,9 @@ footer {
   }*/
   .service-title {
     display: flex;
-    align-items: right;
-    gap: 0.3rem;
+    align-items: center; /* Align checkbox vertically */
+    justify-content: flex-start; /* Align content to the left */
+    gap: 0.5rem; /* Add space between checkbox and label */
     margin-bottom: 1rem;
     font-weight: 600;
     color: var(--mor-green);
