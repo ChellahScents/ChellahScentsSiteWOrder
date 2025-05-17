@@ -183,16 +183,13 @@ footer {
   }*/
   .service-title {
     display: flex;
-    align-items: center; /* Align checkbox vertically */
-    justify-content: flex-start; /* Align content to the left */
-    gap: 0.5rem; /* Add space between checkbox and label */
+    align-items: center;          /* aligns checkbox and text vertically */
+    justify-content: flex-start;  /* aligns to the left */
+    gap: 0.5rem;                  /* adds small spacing between checkbox and text */
     margin-bottom: 1rem;
     font-weight: 600;
     color: var(--mor-green);
   }
   
-  .service-title input[type="checkbox"] {
-    margin: 0;
-  }
   
   
