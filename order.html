@@ -33,7 +33,7 @@
     <input type="email" name="customerEmail" id="customerEmail" placeholder="you@example.com" required />
   
     <!-- Section for Translation -->
-    <fieldset class="service-block">
+    <fieldset class="checkbox-inline">
       <legend><input type="checkbox" name="service" value="translation" id="translation-check"> Translation</legend>
   
       <label for="translationSource">Original Language</label>
@@ -54,7 +54,7 @@
     </fieldset>
   
     <!-- Section for Transcription -->
-    <fieldset class="service-block">
+    <fieldset class="checkbox-inline">
       <legend><input type="checkbox" name="service" value="transcription" id="transcription-check"> Transcription</legend>
   
       <label for="transcriptionSource">Original Language</label>
@@ -75,7 +75,7 @@
     </fieldset>
   
     <!-- Section for Subtitling -->
-    <fieldset class="service-block">
+    <fieldset class="checkbox-inline">
       <legend><input type="checkbox" name="service" value="subtitling" id="subtitling-check"> Subtitling (SRT)</legend>
   
       <label for="subtitlingSource">Original Language</label>
@@ -98,7 +98,9 @@
     <label for="notes">Additional Instructions</label>
     <textarea name="notes" id="notes" placeholder="Any special requests?"></textarea>
   
-    <label><input type="checkbox" name="rush" id="rush"> Rush Delivery (+25%)</label>
+    <div class="checkbox-inline">
+        <label><input type="checkbox" name="rush" id="rush" /> Rush Delivery (+25%)</label>
+      </div>     
   
     <div id="total-price" class="total-display">Total: $0.00</div>
     <div id="paypal-button-container" class="paypal-button-container"></div>
